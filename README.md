@@ -1,5 +1,7 @@
 # CredMaster, but for Windows XP #
 
+:warning: **This only works with Python 3.4 on Windows XP**
+
 Launch a password spray / brute force attach via Amazon AWS passthrough proxies, shifting the requesting IP address for every authentication attempt. This dynamically creates FireProx APIs for more evasive password sprays.  
 
 Shoutout to [@ustayready](https://twitter.com/ustayready) for his [CredKing](https://github.com/ustayready/CredKing) and [FireProx](https://github.com/ustayready/fireprox) tools, which form the base of this suite.
