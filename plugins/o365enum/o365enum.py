@@ -54,7 +54,7 @@ def o365enum_authenticate(url, username, password, useragent, pluginargs):
 
         sess = requests.session()
 
-        response = sess.post(f"{url}/common/GetCredentialType", headers=headers, data=body)
+        response = sess.post("{}/common/GetCredentialType".format(url), headers=headers, data=body)
 
         throttle_status = int(response.json()['ThrottleStatus'])
         if_exists_result = str(response.json()['IfExistsResult'])
@@ -64,10 +64,10 @@ def o365enum_authenticate(url, username, password, useragent, pluginargs):
 
         if domain_type != "MANAGED":
             data_response["result"] = "failure"
-            data_response['output'] = f"[-] FAILURE: {username} Domain type {domain_type} not supported for user enum"
+            data_response['output'] = "[-] FAILURE: {} Domain type {} not supported for user enum".format(username, domain_type)
 
         elif throttle_status != 0 or if_exists_result_response == "THROTTLE":
-            data_response['output'] = f"[?] WARNING: Throttle detected on user {username}"
+            data_response['output'] = "[?] WARNING: Throttle detected on user {}".format(username)
             data_response['result'] = "failure"
 
         else:
@@ -77,7 +77,7 @@ def o365enum_authenticate(url, username, password, useragent, pluginargs):
                 sign = "[!]"
                 data_response["result"] = "success"
                 data_response['valid_user'] = True
-            data_response['output'] = f"{sign} {if_exists_result_response}: {username}"
+            data_response['output'] = "{} {}: {}".format(sign, if_exists_result_response, username)
 
     except Exception as ex:
         data_response['error'] = True

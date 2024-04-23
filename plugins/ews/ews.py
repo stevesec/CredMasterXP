@@ -30,26 +30,26 @@ def ews_authenticate(url, username, password, useragent, pluginargs):
 
     try:
 
-        resp = requests.post(f"{url}/ews/", headers=headers, auth=HttpNtlmAuth(username, password), verify=False)
+        resp = requests.post("{}/ews/".format(url), headers=headers, auth=HttpNtlmAuth(username, password), verify=False)
 
         if resp.status_code == 500:
-            data_response['output'] = f"[*] POTENTIAL: Found credentials, but server returned 500: {username}:{password}"
+            data_response['output'] = "[*] POTENTIAL: Found credentials, but server returned 500: {}:{}".format(username, password)
             data_response['result'] = "potential"
             data_response['valid_user'] = True
 
         elif resp.status_code == 504:
-            data_response['output'] = f"[*] POTENTIAL: Found credentials, but server returned 504: {username}:{password}"
+            data_response['output'] = "[*] POTENTIAL: Found credentials, but server returned 504: {}:{}".format(username, password)
             data_response['result'] = "potential"
             data_response['valid_user'] = True
 
         elif resp.status_code != 401:
             data_response['result'] = "success"
-            data_response['output'] = f"[+] SUCCESS: {username}:{password}"
+            data_response['output'] = "[+] SUCCESS: {}:{}".format(username, password)
             data_response['valid_user'] = True
 
         else:
             data_response['result'] = "failure"
-            data_response['output'] = f"[-] FAILURE: {username}:{password}"
+            data_response['output'] = "[-] FAILURE: {}:{}".format(username, password)
 
 
     except Exception as ex:

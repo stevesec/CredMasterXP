@@ -83,7 +83,7 @@ def azuresso_authenticate(url, username, password, useragent, pluginargs):
     headers = utils.add_custom_headers(pluginargs, headers)
 
     try:
-        r = requests.post(f"{url}/{pluginargs['domain']}/winauth/trust/2005/usernamemixed?client-request-id={requestid}", data=tempdata, headers=headers, verify=False, timeout=30)
+        r = requests.post("{}/{}/winauth/trust/2005/usernamemixed?client-request-id={}".format(url, pluginargs['domain'], requestid), data=tempdata, headers=headers, verify=False, timeout=30)
 
         xmlresponse = str(r.content)
         creds = username + ":" + password
@@ -91,57 +91,57 @@ def azuresso_authenticate(url, username, password, useragent, pluginargs):
 
         # check our resopnse for error/response codes
         if "AADSTS50034" in xmlresponse:
-            data_response['output'] = f"[-] FAILURE ({error_code}): Username not found - {creds}"
+            data_response['output'] = "[-] FAILURE ({}): Username not found - {}".format(error_code, creds)
             data_response['result'] = "failure"
 
         elif "AADSTS50126" in xmlresponse:
-            data_response['output'] = f"[!] VALID_USERNAME ({error_code}): {creds} (invalid password)"
+            data_response['output'] = "[!] VALID_USERNAME ({}): {} (invalid password)".format(error_code, creds)
             data_response['result'] = "failure"
             data_response['valid_user'] = True
 
         elif "DesktopSsoToken" in xmlresponse:
-            data_response['output'] = f"[+] SUCCESS ({error_code}): {creds}"
+            data_response['output'] = "[+] SUCCESS ({}): {}".format(error_code, creds)
             data_response['result'] = "success"
             data_response['valid_user'] = True
 
             token = re.findall(r"<DesktopSsoToken>.{1,}</DesktopSsoToken>", xmlresponse)
             if (token):
-                data_response['output'] += f" - GOT TOKEN {token[0]}"
+                data_response['output'] += " - GOT TOKEN {}".format(token[0])
 
         elif "AADSTS53003" in xmlresponse:
             # Access successful but blocked by CAP
             data_response['result'] = "success"
-            data_response['output'] = f"[+] SUCCESS ({error_code}): {creds} - NOTE: The response indicates token access is blocked by CAP"
+            data_response['output'] = "[+] SUCCESS ({}): {} - NOTE: The response indicates token access is blocked by CAP".format(error_code, creds)
             data_response['valid_user'] = True
 
         elif "AADSTS50076" in xmlresponse:
             # Microsoft MFA response
             data_response['result'] = "success"
-            data_response['output'] = f"[+] SUCCESS ({error_code}): {creds} - NOTE: The response indicates MFA (Microsoft) is in use"
+            data_response['output'] = "[+] SUCCESS ({}): {} - NOTE: The response indicates MFA (Microsoft) is in use".format(error_code, creds)
             data_response['valid_user'] = True
 
         elif "AADSTS50079" in xmlresponse:
             # Microsoft MFA response
             data_response['result'] = "success"
-            data_response['output'] = f"[+] SUCCESS ({error_code}): {creds} - NOTE: The response indicates MFA (Microsoft) must be onboarded!"
+            data_response['output'] = "[+] SUCCESS ({}): {} - NOTE: The response indicates MFA (Microsoft) must be onboarded!".format(error_code, creds)
             data_response['valid_user'] = True
 
         elif "AADSTS50056" in xmlresponse:
-            data_response['output'] = f"[!] VALID_USERNAME ({error_code}): {creds} (no password in AzureAD)"
+            data_response['output'] = "[!] VALID_USERNAME ({}): {} (no password in AzureAD)".format(error_code, creds)
             data_response['result'] = "failure"
             data_response['valid_user'] = True
 
         elif "AADSTS80014" in xmlresponse:
-            data_response['output'] = f"[!] VALID_USERNAME ({error_code}): {creds} (max pass-through authentication time exceeded)"
+            data_response['output'] = "[!] VALID_USERNAME ({}): {} (max pass-through authentication time exceeded)".format(error_code, creds)
             data_response['result'] = "failure"
             data_response['valid_user'] = True
 
         elif "AADSTS50053" in xmlresponse:
-            data_response['output'] = f"[?] WARNING ({error_code}): SMART LOCKOUT DETECTED - Unable to enumerate: {creds}"
+            data_response['output'] = "[?] WARNING ({}): SMART LOCKOUT DETECTED - Unable to enumerate: {}".format(error_code, creds)
             data_response['result'] = "potential"
 
         else:
-            data_response['output'] = f"[?] UNKNOWN ({error_code}): {creds}"
+            data_response['output'] = "[?] UNKNOWN ({}): {}".format(error_code, creds)
             data_response['result'] = "failure"
 
 

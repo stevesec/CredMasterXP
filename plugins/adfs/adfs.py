@@ -55,12 +55,12 @@ def adfs_authenticate(url, username, password, useragent, pluginargs):
 
         if resp.status_code == 302:
             data_response['result'] = "success"
-            data_response['output'] = f"[+] SUCCESS: => {username}:{password}"
+            data_response['output'] = "[+] SUCCESS: => {}:{}".format(username, password)
             data_response['valid_user'] = True
 
         else:  # fail
             data_response['result'] = "failure"
-            data_response['output'] = f"[-] FAILURE: {resp.status_code} => {username}:{password}"
+            data_response['output'] = "[-] FAILURE: {} => {}:{}".format(resp.status_code, username, password)
 
     except Exception as ex:
         data_response['error'] = True
