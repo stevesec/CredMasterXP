@@ -64,7 +64,7 @@ class CredMaster(object):
 		self.args = args
 
 		if args.config is not None and not os.path.exists(args.config):
-			self.log_entry(f"Config file {args.config} cannot be found")
+			self.log_entry("Config file {} cannot be found".format(args.config))
 			sys.exit()
 
 		# assign variables
@@ -135,24 +135,24 @@ class CredMaster(object):
 		if self.outfile != None:
 			of = self.outfile + "-credmaster.txt"
 			if os.path.exists(of):
-				self.log_entry(f"File {of} already exists, try again with a unique file name")
+				self.log_entry("File {} already exists, try again with a unique file name".format(of))
 				sys.exit()
 
 		# File handling
 		if self.userfile is not None and not os.path.exists(self.userfile):
-			self.log_entry(f"Username file {self.userfile} cannot be found")
+			self.log_entry("Username file {} cannot be found".format(self.userfile))
 			sys.exit()
 
 		if self.passwordfile is not None and not os.path.exists(self.passwordfile):
-			self.log_entry(f"Password file {self.passwordfile} cannot be found")
+			self.log_entry("Password file {} cannot be found".format(self.passwordfile))
 			sys.exit()
 
 		if self.userpassfile is not None and not os.path.exists(self.userpassfile):
-			self.log_entry(f"User-pass file {self.userpassfile} cannot be found")
+			self.log_entry("User-pass file {} cannot be found".format(self.userpassfile))
 			sys.exit()
 
 		if self.useragentfile is not None and not os.path.exists(self.useragentfile):
-			self.log_entry(f"Useragent file {self.useragentfile} cannot be found")
+			self.log_entry("Useragent file {} cannot be found".format(self.useragentfile))
 			sys.exit()
 
 		# AWS Key Handling
@@ -174,7 +174,7 @@ class CredMaster(object):
 
 		# Region handling
 		if self.region is not None and self.region not in self.regions:
-			self.log_entry(f"Input region {self.region} not a supported AWS region, {self.regions}")
+			self.log_entry("Input region {} not a supported AWS region, {}".format(self.region, self.regions))
 			sys.exit()
 
 		# Jitter handling
@@ -231,17 +231,17 @@ class CredMaster(object):
 		pluginargs['thread_count'] = self.thread_count
 
 		self.start_time = datetime.datetime.utcnow()
-		self.log_entry(f"Execution started at: {self.start_time}")
+		self.log_entry("Execution started at: {}".format(self.start_time))
 
 		# Check with plugin to make sure it has the data that it needs
-		validator = importlib.import_module(f"plugins.{self.plugin}")
+		validator = importlib.import_module("plugins.{}".format(self.plugin))
 		if getattr(validator,"validate",None) is not None:
 			valid, errormsg, pluginargs = validator.validate(pluginargs, self.args)
 			if not valid:
 				self.log_entry(errormsg)
 				return
 		else:
-			self.log_entry(f"No validate function found for plugin: {self.plugin}")
+			self.log_entry("No validate function found for plugin: {}".format(self.plugin))
 
 		self.userenum = False
 		if "userenum" in pluginargs and pluginargs["userenum"]:
@@ -254,18 +254,18 @@ class CredMaster(object):
 
 		# batch login
 		if self.batch_size:
-			self.log_entry(f"Batching requests enabled: {self.batch_size} requests per thread, {self.batch_delay}s of delay between each batch.")
+			self.log_entry("Batching requests enabled: {} requests per thread, {}s of delay between each batch.".format(self.batch_size, self.batch_delay))
 
 
 		# Custom header handling
 		if self.header is not None:
-			self.log_entry(f"Adding custom header \"{self.header}\" to requests")
+			self.log_entry("Adding custom header \"{}\" to requests".format(self.header))
 			head = self.header.split(":")[0].strip()
 			val = self.header.split(":")[1].strip()
 			pluginargs["custom-headers"] = {head : val}
 
 		if self.xforwardedfor is not None:
-			self.log_entry(f"Setting static X-Forwarded-For header to: \"{self.xforwardedfor}\"")
+			self.log_entry("Setting static X-Forwarded-For header to: \"{}\"".format(self.xforwardedfor))
 			pluginargs["xforwardedfor"] = self.xforwardedfor 
 			
 		# this is the original URL, NOT the fireproxy one. Don't use this in your sprays!
@@ -304,10 +304,10 @@ class CredMaster(object):
 					if self.userenum:
 						notify.notify_update("Info: Starting Userenum.", self.notify_obj)
 					else:
-						notify.notify_update(f"Info: Starting Spray.\nPass: {password}", self.notify_obj)
+						notify.notify_update("Info: Starting Spray.\nPass: {}".format(password), self.notify_obj)
 
 				else:
-					notify.notify_update(f"Info: Spray Continuing.\nPass: {password}", self.notify_obj)
+					notify.notify_update("Info: Spray Continuing.\nPass: {}".format(password), self.notify_obj)
 
 				if self.weekdaywarrior is not None:
 					spray_days = {
@@ -323,7 +323,7 @@ class CredMaster(object):
 					self.weekdaywarrior = int(self.weekdaywarrior)
 					sleep_time = self.ww_calc_next_spray_delay(self.weekdaywarrior)
 					next_time = datetime.datetime.utcnow() + datetime.timedelta(hours=self.weekdaywarrior) + datetime.timedelta(minutes=sleep_time)
-					self.log_entry(f"Weekday Warrior: sleeping {sleep_time} minutes until {next_time.strftime('%H:%M')} on {spray_days[next_time.weekday()]} in UTC {self.weekdaywarrior}")
+					self.log_entry("Weekday Warrior: sleeping {} minutes until {} on {} in UTC {}".format(sleep_time, next_time.strftime('%H:%M'), spray_days[next_time.weekday()], self.weekdaywarrior))
 					time.sleep(sleep_time*60)
 
 				self.load_credentials(password)
@@ -342,22 +342,22 @@ class CredMaster(object):
 
 				if self.delay is None or len(passwords) == 1 or password == passwords[len(passwords)-1]:
 					if self.userpassfile != None:
-						self.log_entry(f"Completed spray with user-pass file {self.userpassfile} at {datetime.datetime.utcnow()}")
+						self.log_entry("Completed spray with user-pass file {} at {}".format(self.userpassfile, datetime.datetime.utcnow()))
 					elif self.userenum:
-						self.log_entry(f"Completed userenum at {datetime.datetime.utcnow()}")
+						self.log_entry("Completed userenum at {}".format(datetime.datetime.utcnow()))
 					else:
-						self.log_entry(f"Completed spray with password {password} at {datetime.datetime.utcnow()}")
+						self.log_entry("Completed spray with password {} at {}".format(password, datetime.datetime.utcnow()))
 
-					notify.notify_update(f"Info: Spray complete.", self.notify_obj)
+					notify.notify_update("Info: Spray complete.", self.notify_obj)
 					continue
 				elif count != self.passwordsperdelay:
-					self.log_entry(f"Completed spray with password {password} at {datetime.datetime.utcnow()}, moving on to next password...")
+					self.log_entry("Completed spray with password {} at {}, moving on to next password...".format(password, datetime.datetime.utcnow()))
 					continue
 				else:
-					self.log_entry(f"Completed spray with password {password} at {datetime.datetime.utcnow()}, sleeping for {self.delay} minutes before next password spray")
-					self.log_entry(f"Valid credentials discovered: {len(self.results)}")
+					self.log_entry("Completed spray with password {} at {}, sleeping for {} minutes before next password spray".format(password, datetime.datetime.utcnow(), self.delay))
+					self.log_entry("Valid credentials discovered: {}".format(len(self.results)))
 					for success in self.results:
-						self.log_entry(f"Valid: {success['username']}:{success['password']}")
+						self.log_entry("Valid: {}:{}".format(success['username'], success['password']))
 					count = 0
 					time.sleep(self.delay * 60)
 
@@ -389,7 +389,7 @@ class CredMaster(object):
 			self.log_entry("Thread count over maximum, reducing to 15")
 			self.thread_count = len(self.regions)
 
-		self.log_entry(f"Creating {self.thread_count} API Gateways for {url}")
+		self.log_entry("Creating {} API Gateways for {}".format(self.thread_count, url))
 
 		self.apis = []
 
@@ -399,7 +399,7 @@ class CredMaster(object):
 			if region is not None:
 				reg = region
 			self.apis.append(self.create_api(reg, url.strip()))
-			self.log_entry(f"Created API - Region: {reg} ID: ({self.apis[x]['api_gateway_id']}) - {self.apis[x]['proxy_url']} => {url}")
+			self.log_entry("Created API - Region: {} ID: ({}) - {} => {}".format(reg, self.apis[x]['api_gateway_id'], self.apis[x]['proxy_url'], url))
 
 
 	def create_api(self, region, url):
@@ -429,16 +429,16 @@ class CredMaster(object):
 
 	def display_stats(self, start=True):
 		if start:
-			self.log_entry(f"Total Regions Available: {len(self.regions)}")
-			self.log_entry(f"Total API Gateways: {len(self.apis)}")
+			self.log_entry("Total Regions Available: {}".format(len(self.regions)))
+			self.log_entry("Total API Gateways: {}".format(len(self.apis)))
 
 		if self.end_time and not start:
-			self.log_entry(f"End Time: {self.end_time}")
-			self.log_entry(f"Total Execution: {self.time_lapse} seconds")
-			self.log_entry(f"Valid credentials identified: {len(self.results)}")
+			self.log_entry("End Time: {}".format(self.end_time))
+			self.log_entry("Total Execution: {} seconds".format(self.time_lapse))
+			self.log_entry("Valid credentials identified: {}".format(len(self.results)))
 
 			for cred in self.results:
-				self.log_entry(f"VALID - {cred['username']}:{cred['password']}")
+				self.log_entry("VALID - {}:{}".format(cred['username'], cred['password']))
 
 
 	def list_apis(self):
@@ -448,11 +448,11 @@ class CredMaster(object):
 			args, help_str = self.get_fireprox_args("list", region)
 			fp = FireProx(args, help_str)
 			active_apis = fp.list_api()
-			self.log_entry(f"Region: {region} - total APIs: {len(active_apis)}")
+			self.log_entry("Region: {} - total APIs: {}".format(region, len(active_apis)))
 
 			if len(active_apis) != 0:
 				for api in active_apis:
-					self.log_entry(f"API Info --  ID: {api['id']}, Name: {api['name']}, Created Date: {api['createdDate']}")
+					self.log_entry("API Info --  ID: {}, Name: {}, Created Date: {}".format(api['id'], api['name'], api['createdDate']))
 
 
 	def destroy_single_api(self, api):
@@ -466,7 +466,7 @@ class CredMaster(object):
 
 			for api1 in active_apis:
 				if api1["id"] == api:
-					self.log_entry(f"API found in region {region}, destroying...")
+					self.log_entry("API found in region {}, destroying...".format(region))
 					fp.delete_api(api)
 					sys.exit()
 
@@ -479,7 +479,7 @@ class CredMaster(object):
 
 			args, help_str = self.get_fireprox_args("delete", api["region"], api_id = api["api_gateway_id"])
 			fp = FireProx(args, help_str)
-			self.log_entry(f"Destroying API ({args['api_id']}) in region {api['region']}")
+			self.log_entry("Destroying API ({}) in region {}".format(args['api_id'], api['region']))
 			fp.delete_api(args["api_id"])
 
 
@@ -497,23 +497,23 @@ class CredMaster(object):
 			err = "skipping"
 			if count != 0:
 				err = "removing"
-			self.log_entry(f"Region: {region}, found {count} APIs configured, {err}")
+			self.log_entry("Region: {}, found {} APIs configured, {}".format(region, count, err))
 
 			for api in active_apis:
 				if "fireprox" in api["name"]:
 					fp.delete_api(api["id"])
 					clear_count += 1
 
-		self.log_entry(f"APIs removed: {clear_count}")
+		self.log_entry("APIs removed: {}".format(clear_count))
 
 
 	def spray_thread(self, api_key, api_dict, pluginargs):
 
 		try:
-			plugin_authentiate = getattr(importlib.import_module(f"plugins.{self.plugin}.{self.plugin}"), f"{self.plugin}_authenticate")
+			plugin_authentiate = getattr(importlib.import_module("plugins.{}.{}".format(self.plugin, self.plugin)), "{}_authenticate".format(self.plugin))
 		except Exception as ex:
 			self.log_entry("Error: Failed to import plugin with exception")
-			self.log_entry(f"Error: {ex}")
+			self.log_entry("Error: {}".format(ex))
 			sys.exit()
 
 		count = 0
@@ -541,7 +541,7 @@ class CredMaster(object):
 				# 	print(response["debug"])
 
 				if response["error"]:
-					self.log_entry(f"ERROR: {api_key}: {cred['username']} - {response['output']}")
+					self.log_entry("ERROR: {}: {} - {}".format(api_key, cred['username'], response['output']))
 
 				if response["result"].lower() == "success" and ("userenum" not in pluginargs):
 					self.results.append( {"username" : cred["username"], "password" : cred["password"]} )
@@ -554,20 +554,20 @@ class CredMaster(object):
 				if self.color:
 
 					if response["result"].lower() == "success":
-						self.log_entry(utils.prGreen(f"{api_key}: {response['output']}"))
+						self.log_entry(utils.prGreen("{}: {}".format(api_key, response['output'])))
 
 					elif response["result"].lower() == "potential":
-						self.log_entry(utils.prYellow(f"{api_key}: {response['output']}"))
+						self.log_entry(utils.prYellow("{}: {}".format(api_key, response['output'])))
 
 					elif response["result"].lower() == "failure":
-						self.log_entry(utils.prRed(f"{api_key}: {response['output']}"))
+						self.log_entry(utils.prRed("{}: {}".format(api_key, response['output'])))
 
 				else:
-					self.log_entry(f"{api_key}: {response['output']}")
+					self.log_entry("{}: {}".format(api_key, response['output']))
 
 				self.q_spray.task_done()
 			except Exception as ex:
-				self.log_entry(f"ERROR: {api_key}: {cred['username']} - {ex}")
+				self.log_entry("ERROR: {}: {} - {}".format(api_key, cred['username'], ex))
 
 
 	def load_credentials(self, password):
@@ -578,13 +578,13 @@ class CredMaster(object):
 
 		users = []
 		if self.userenum:
-			self.log_entry(f"Loading users and useragents{r}")
+			self.log_entry("Loading users and useragents{}".format(r))
 			users = self.load_file(self.userfile)
 		elif self.userpassfile is None:
-			self.log_entry(f"Loading credentials from {self.userfile} with password {password}{r}")
+			self.log_entry("Loading credentials from {} with password {}{}".format(self.userfile, password, r))
 			users = self.load_file(self.userfile)
 		else:
-			self.log_entry(f"Loading credentials from {self.userpassfile} as user-pass file{r}")
+			self.log_entry("Loading credentials from {} as user-pass file{}".format(self.userpassfile, r))
 			users = self.load_file(self.userpassfile)
 
 
@@ -676,11 +676,11 @@ class CredMaster(object):
 		self.lock.acquire()
 
 		ts = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-		print(f"[{ts}] {entry}")
+		print("[{}] {}".format(ts, entry))
 
 		if self.outfile is not None:
 			with open(self.outfile + "-credmaster.txt", 'a+') as file:
-				file.write(f"[{ts}] {entry}")
+				file.write("[{}] {}".format(ts, entry))
 				file.write("\n")
 				file.close()
 

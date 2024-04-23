@@ -73,10 +73,10 @@ class FireProx(object):
         config = configparser.ConfigParser()
         config.read(os.path.expanduser('~/.aws/config'))
         # If profile in files, try it, but flow through if it does not work
-        config_profile_section = f'profile {self.profile_name}'
+        config_profile_section = 'profile {}'.format(self.profile_name)
         if self.profile_name in credentials:
             if config_profile_section not in config:
-                print(f'Please create a section for {self.profile_name} in your ~/.aws/config file')
+                print('Please create a section for {} in your ~/.aws/config file'.format(self.profile_name))
                 return False
             self.region = config[config_profile_section].get('region', 'us-east-1')
             try:
@@ -133,7 +133,7 @@ class FireProx(object):
         title = 'fireprox_{}'.format(
             tldextract.extract(url).domain
         )
-        version_date = f'{datetime.datetime.now():%Y-%m-%dT%XZ}'
+        version_date = '{:%Y-%m-%dT%XZ}'.format(datetime.datetime.now())
         template = '''
         {
           "swagger": "2.0",
@@ -296,7 +296,7 @@ class FireProx(object):
 
         resource_id = self.get_resource(api_id)
         if resource_id:
-            print(f'Found resource {resource_id} for {api_id}!')
+            print('Found resource {} for {}!'.format(resource_id, api_id))
             response = self.client.update_integration(
                 restApiId=api_id,
                 resourceId=resource_id,
@@ -311,7 +311,7 @@ class FireProx(object):
             )
             return response['uri'].replace('/{proxy}', '') == url
         else:
-            self.error(f'Unable to update, no valid resource for {api_id}')
+            self.error('Unable to update, no valid resource for {}'.format(api_id))
 
     def delete_api(self, api_id):
         if not api_id:
@@ -334,7 +334,7 @@ class FireProx(object):
                 api_id = item['id']
                 name = item['name']
                 proxy_url = self.get_integration(api_id).replace('{proxy}', '')
-                url = f'https://{api_id}.execute-api.{self.region}.amazonaws.com/fireprox/'
+                url = 'https://{}.execute-api.{}.amazonaws.com/fireprox/'.format(api_id, self.region)
                 # if not deleting: #not api_id == deleted_api_id:
                 #     print(f'[{created_dt}] ({api_id}) {name}: {url} => {proxy_url}')
             except:
@@ -361,7 +361,7 @@ class FireProx(object):
         )
         resource_id = response['id']
         return (resource_id,
-                f'https://{api_id}.execute-api.{self.region}.amazonaws.com/fireprox/')
+                'https://{}.execute-api.{}.amazonaws.com/fireprox/'.format(api_id, self.region))
 
     def get_resource(self, api_id):
         if not api_id:
@@ -421,7 +421,7 @@ def main():
     print(args)
     fp = FireProx(args, help_text)
     if args.command == 'list':
-        print(f'Listing API\'s...')
+        print('Listing API\'s...')
         result = fp.list_api()
 
     elif args.command == 'create':
@@ -430,13 +430,13 @@ def main():
     elif args.command == 'delete':
         result = fp.delete_api(fp.api_id)
         success = 'Success!' if result else 'Failed!'
-        print(f'Deleting {fp.api_id} => {success}')
+        print('Deleting {} => {}'.format(fp.api_id, success))
 
     elif args.command == 'update':
-        print(f'Updating {fp.api_id} => {fp.url}...')
+        print('Updating {} => {}...'.format(fp.api_id, fp.url))
         result = fp.update_api(fp.api_id, fp.url)
         success = 'Success!' if result else 'Failed!'
-        print(f'API Update Complete: {success}')
+        print('API Update Complete: {}'.format(success))
 
 
 if __name__ == '__main__':

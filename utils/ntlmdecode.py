@@ -217,7 +217,7 @@ def ntlmdecode(authenticate_header):
     try:
         st = base64.b64decode(st_raw)
     except Exception as e:
-        raise Exception(f"Input seems to be a non-valid base64-encoded string: '{authenticate_header}'")
+        raise Exception("Input seems to be a non-valid base64-encoded string: '{}'".format(authenticate_header))
 
     if not st[:8] == b'NTLMSSP\x00':
         raise Exception("NTLMSSP header not found at start of input string")

